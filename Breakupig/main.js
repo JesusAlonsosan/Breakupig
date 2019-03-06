@@ -1,18 +1,23 @@
-
 //CANVAS
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
-//VARIABLES
-//pelota
 
-var interval;
+//VARIABLES
+
+var frames = 0
+var interval
+var audio
+var velocity = 1000/50
+
+//pelota
 var score = 0
-var ballRadius = 8;
-var x = canvas.width/2; 
+var ballRadius = 7;
+var x = canvas.width/3; 
 var y = canvas.height-30;
-var dx = 2;
-var dy = -2;
+var dx = 6;
+var dy = -6;
 
 //paleta
 var paddleHeight = 20;
@@ -29,11 +34,8 @@ var brickHeight = 20;
 var brickPadding = 20;
 var brickOffsetTop = 100;
 var brickOffsetLeft = 35;
-var myMusic;
-
 
 //bloques nuevos
-
 var bricks = [];
 for(var c=0; c<brickColumnCount; c++) {
   bricks[c] = [];
@@ -42,37 +44,11 @@ for(var c=0; c<brickColumnCount; c++) {
   }
 }
 
+
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-//sonido
-
-
-
-//FUNCIONES
-function gameOver(){
-    clearInterval(interval)
-    ctx.font = "50px Arial"
-    ctx.fillStyle = "white"
-    ctx.fillText('GAME OVER',140,400)
-    ctx.fillText(enemies.length, 226,150)
-}
-
-function chamPeon(){
-    clearInterval(interval)
-    ctx.font = "50px Arial"
-    ctx.fillStyle = "white"
-    ctx.fillText('CHAMPION!!',140,400)
-    ctx.fillText(enemies.length, 226,150)
-}
-
-//dibujar Score
-function drawScore() {
-    ctx.font = "45px Arial";
-    ctx.fillStyle = "#E9E4E8";
-    ctx.fillText("" + score, 280, 60);
-}
-//funcion mover paleta izquierda y derecha
+/*
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight") {
         rightPressed = true;
@@ -90,7 +66,50 @@ function keyUpHandler(e) {
         leftPressed = false;
     }
 }
-//Colisiones
+*/
+
+
+function gameOver(){
+    clearInterval(interval)
+    ctx.font = "50px Arial"
+    ctx.fillStyle = "white"
+    ctx.fillText('GAME OVER',140,400)
+    ctx.fillText(enemies.length, 226,150)
+}
+
+function chamPeon(){
+    clearInterval(interval)
+    ctx.font = "50px Arial"
+    ctx.fillStyle = "white"
+    ctx.fillText('CHAMPION!!',140,400)
+    ctx.fillText(enemies.length, 226,150)
+}
+
+
+function drawScore() {
+    ctx.font = "45px Arial";
+    ctx.fillStyle = "#E9E4E8";
+    ctx.fillText("" + score, 280, 60);
+}
+
+function keyDownHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        rightPressed = true;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft") {
+        leftPressed = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        rightPressed = false;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft") {
+        leftPressed = false;
+    }
+}
+
 function collisionDetection() {
   for(var c=0; c<brickColumnCount; c++) {
     for(var r=0; r<brickRowCount; r++) {
@@ -112,7 +131,6 @@ function collisionDetection() {
   }
 }
 
-//AUX FUNCIONES
 //pelota
 function drawBall() {
     ctx.beginPath();
@@ -149,9 +167,10 @@ function drawBricks() {
   }
 }
 
-
 function draw() {
     ctx.clearRect(0,0, canvas.width, canvas.height);
+    frames ++
+        // aqui pongo aumento de la velocidad en base a los frames
     drawBricks();
     drawBall();
     drawPaddle();
@@ -171,42 +190,41 @@ function draw() {
         else {
             gameOver();
             document.location.reload();
-            clearInterval(interval);    
-            
+            clearInterval(interval);
         }
     }
     
     if(rightPressed && paddleX < canvas.width-paddleWidth) {
-        paddleX += 8;
+        paddleX += 7;
     }
     else if(leftPressed && paddleX > 0) {
-        paddleX -= 8;
+        paddleX -= 7;
     }
     
     x += dx;
     y += dy;
 }
 
+//var interval = setInterval(draw,5);
 
-var interval = setInterval(draw, 10);
+var startbtn=document.getElementById("start") 
+startbtn.onclick=function (){
+    interval = setInterval(draw,velocity)
+
+    audio=new Audio()
+    audio.src="./Audio/scsi-9-eclair-de-lune.mp3"
+    audio.onload=function(){
+        audio.play()
+    }
+}
+
+ 
+
 
 
 //bloques
-ctx.beginPath();
-ctx.rect(160, 10, 100, 40);
-ctx.strokeStyle = "white";
-ctx.stroke();
-ctx.closePath();
-
-
-
 //constructores
 //instancias
-
-
+//main fuctions
+//aux fuctions
 //listeners
-addEventListener("click", (e)=> {
-    if(e.target.classList[0] == "btn" ){
-        start();
-    }
-})
